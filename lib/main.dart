@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Palindrome Checker',
-      home: PalindromeChecker(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Palindrome Checker'),
+        ),
+        body: PalindromeChecker(),
+      ),
     );
   }
 }
@@ -20,61 +23,38 @@ class PalindromeChecker extends StatefulWidget {
 }
 
 class _PalindromeCheckerState extends State<PalindromeChecker> {
-  TextEditingController textEditingController = TextEditingController();
-  String message = '';
+  final TextEditingController _controller = TextEditingController();
 
-  bool isPalindrome(String str) {
-    int i = 0;
-    int j = str.length - 1;
-    while (i < j) {
-      if (str[i] != str[j]) {
-        return false;
-      }
-      i++;
-      j--;
-    }
-    return true;
+  bool _isPalindrome = false;
+
+  void _checkPalindrome(String input) {
+    String reversed = String.fromCharCodes(input.runes.toList().reversed);
+    setState(() {
+      _isPalindrome = input == reversed;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Palindrome Checker'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: textEditingController,
-              decoration: InputDecoration(
-                hintText: 'Enter a string',
-              ),
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'Enter a word or phrase',
             ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  String str = textEditingController.text;
-                  bool palindrome = isPalindrome(str);
-                  if (palindrome) {
-                    message = '$str is a palindrome!';
-                  } else {
-                    message = '$str is not a palindrome!';
-                  }
-                });
-              },
-              child: Text('Check'),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              message,
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+            onChanged: _checkPalindrome,
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            _isPalindrome ? 'It is a palindrome!' : 'Not a palindrome',
+            style: TextStyle(fontSize: 24.0),
+          ),
+        ],
       ),
     );
   }
